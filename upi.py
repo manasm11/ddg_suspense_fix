@@ -8,3 +8,10 @@ def get_upi_username(description: str):
     if len(upiSplits) < 4:
         log.exception("Invalid upi description")
     return upiSplits[3]
+
+def update_upi_exports(upiSet: set, exports: list, entryField: str, partyField):
+    for upiUsername in upiSet:
+        exports.append({
+            entryField: upiUsername,
+            partyField: "",
+        })
