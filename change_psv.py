@@ -1,9 +1,10 @@
 import os
+import csv
 import log
 
-def confirm_file(filepath):
+def confirm_file_exists(filepath):
     if not os.path.isfile(filepath):
-        log.error(filepath, "File Not Found")
+        log.exception(filepath, "File Not Found")
 
 def update_isUselessRow(isUselessRow, line):
     if not isUselessRow:
@@ -29,9 +30,26 @@ def correct_file(filepath):
 def is_line_empty(line):
     return not line or not str(line).strip()
 
-def change_psv(psv_file):
-    confirm_file(psv_file)
+def is_file_format_correct(filepath, columns):
+    with open(filepath, "r") as csvfile:
+        data = csv.DictReader(csvfile, delimiter='|')
+        data = next(data)
+        for fieldName in columns:
+            try:
+                data[fieldName]
+            except Exception as e:
+                log.error(e)
+                return False
+    return True
+
+def change_psv(psv_file, columns):
+    confirm_file_exists(psv_file)
+    if is_file_format_correct(psv_file, columns):
+        return True
     with open(psv_file) as f:
         if f.readline().startswith("Detailed Statement"):
             log.info("Incorrect psv format, trying to correct...")
             correct_file(psv_file)
+    if not is_file_format_correct(psv_file, columns):
+        log.exception("Unable to correct file format")
+    return True
