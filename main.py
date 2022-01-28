@@ -28,27 +28,23 @@ upiDatesValues = defaultdict(list)
 exports = []
 exportPsv = "export.psv"
 
-def main(filepath):
-    global upiDatesValues, exports, exportPsv
-    filepath = filepath.strip()
-    log.info(f"Processing {filepath}...")
-    change_psv(filepath, columns)
-
-    with open(filepath, "r") as csvfile:
-        for row in csv.DictReader(csvfile, delimiter='|'):
-            row[descriptionField] = row[descriptionField].upper()
-            if is_upi(row[descriptionField]):
-                dateValue = "[" + row[dateField] + " : " + row[valueField] + "] "
-                upiDatesValues[get_upi_username(row[descriptionField])].append(dateValue)
-    for upiUser in upiDatesValues.keys():
-        exports.append(get_dictionary(upiUser, upiDatesValues[upiUser], type="UPI"))
-
-
 if __name__ == "__main__":
     filepaths = input("Enter psv file path (file1,file2): ")
 
     for filepath in filepaths.split(","):
-        main(filepath)
+        filepath = filepath.strip()
+        log.info(f"Processing {filepath}...")
+        change_psv(filepath, columns)
+
+        with open(filepath, "r") as csvfile:
+            for row in csv.DictReader(csvfile, delimiter='|'):
+                row[descriptionField] = row[descriptionField].upper()
+                if is_upi(row[descriptionField]):
+                    dateValue = "[" + row[dateField] + " : " + row[valueField] + "] "
+                    upiDatesValues[get_upi_username(row[descriptionField])].append(dateValue)
+
+    for upiUser in upiDatesValues.keys():
+        exports.append(get_dictionary(upiUser, upiDatesValues[upiUser], type="UPI"))
 
     with open(exportPsv, "w", newline="") as f:
         log.info("Exporting data to", exportPsv)
