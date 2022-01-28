@@ -6,6 +6,7 @@ from upi import is_upi, get_upi_username
 
 descriptionField = "Description"
 dateField = "Value Date"
+valueField = "Transaction Amount(INR)"
 
 columns = [
     "No.",
@@ -14,21 +15,21 @@ columns = [
     dateField
 ]
 
-def get_dictionary(upiUser: str, dates: list, type):
+def get_dictionary(upiUser: str, dateValues: list, type):
     return {
         "Type": type,
         "Entry": upiUser,
         "Party": "",
-        "Dates Count": len(dates),
-        "Dates": ','.join(dates),
+        "Dates Count": len(dateValues),
+        "Dates and Values": ', '.join(dateValues),
     }
 
-upiDates = defaultdict(list)
+upiDatesValues = defaultdict(list)
 exports = []
 exportPsv = "export.psv"
 
 def main(filepath):
-    global upiDates, exports, exportPsv
+    global upiDatesValues, exports, exportPsv
     filepath = filepath.strip()
     log.info(f"Processing {filepath}...")
     change_psv(filepath, columns)
@@ -37,9 +38,10 @@ def main(filepath):
         for row in csv.DictReader(csvfile, delimiter='|'):
             row[descriptionField] = row[descriptionField].upper()
             if is_upi(row[descriptionField]):
-                upiDates[get_upi_username(row[descriptionField])].append(row[dateField])
-    for upiUser in upiDates.keys():
-        exports.append(get_dictionary(upiUser, upiDates[upiUser], type="UPI"))
+                dateValue = "[" + row[dateField] + " : " + row[valueField] + "] "
+                upiDatesValues[get_upi_username(row[descriptionField])].append(dateValue)
+    for upiUser in upiDatesValues.keys():
+        exports.append(get_dictionary(upiUser, upiDatesValues[upiUser], type="UPI"))
 
 
 if __name__ == "__main__":
