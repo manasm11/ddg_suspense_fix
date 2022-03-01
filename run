@@ -12,7 +12,7 @@ check() {
     echo "Running black..."
     python -m black . --exclude=venv
     echo "Running pydocstyle..."
-    python -m pydocstyle --convention=numpy -v __init__.py !venv/**/*
+    python -m pydocstyle --convention=numpy -v __init__.py parse_excels/* ui/*
     echo "Running flake8..."
     python -m flake8 --exclude=venv,aws_/schema.py --max-complexity=4 --max-line-length=88 --extend-ignore=E203
 }

@@ -1,5 +1,7 @@
 """Entry point of the project."""
 
+from parse_excels import generate_json_from_excels
+
 # import csv
 # from collections import defaultdict
 
@@ -31,7 +33,7 @@
 
 def main():
     """First function to be executed in the project."""
-    pass
+    generate_json_from_excels("input_excels", "transactions.json")
 
 
 if __name__ == "__main__":
