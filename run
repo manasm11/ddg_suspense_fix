@@ -1,0 +1,93 @@
+#!/bin/bash
+
+DIR=${PWD##*/}
+export LOG_LEVEL="INFO"
+
+check() {
+    install-dev
+    source venv/bin/activate
+    _confirm_previous_command
+    echo "Running isort..."
+    python -m isort --gitignore .
+    echo "Running black..."
+    python -m black . --exclude=venv
+    echo "Running pydocstyle..."
+    python -m pydocstyle --convention=numpy -v __init__.py !venv/**/*
+    echo "Running flake8..."
+    python -m flake8 --exclude=venv,aws_/schema.py --max-complexity=4 --max-line-length=88 --extend-ignore=E203
+}
+
+clean() {
+    rm -rf venv
+    rm -rf .pytest_cache
+    rm -rf .cache
+    rm *.pyc
+    rm **/*.pyc
+    rm *.log
+}
+
+help() {
+    echo "Please refer main function in the run script for valid options"
+}
+
+install() {
+    [ -d venv ] && echo "venv directory already exists, 'clean' to create again" && return
+    echo "Started 'install' process..."
+    python3 -m venv venv
+    _confirm_previous_command
+    source venv/bin/activate
+    _confirm_previous_command
+    pip install --upgrade pip > /dev/null
+    echo "Installing dependencies..."
+    pip install -r requirements.txt > /dev/null
+}
+
+install-dev() {
+    [ -d venv ] && echo "venv directory already exists, 'clean' to create again" && return
+    echo "Started 'install-dev' process..."
+    python3 -m venv venv
+    _confirm_previous_command
+    source venv/bin/activate
+    _confirm_previous_command
+    pip install --upgrade pip > /dev/null
+    echo "Installing dependencies..."
+    pip install -r requirements_dev.txt > /dev/null
+    pip install -r requirements.txt > /dev/null
+}
+
+push() {
+    check
+    _confirm_previous_command
+    # clean
+    git status --short
+    echo -n "Please confirm the above changes (y/n): "
+    read QUIT
+    [ "${QUIT}" = "y" ] && git commit -a
+    _confirm_previous_command
+    echo -n "Enter branch (master): "
+    read BRANCH
+    BRANCH=${BRANCH:-master}
+    git push origin ${BRANCH}
+}
+
+start() {
+    install
+    source venv/bin/activate
+    _confirm_previous_command
+    python __init__.py
+}
+
+test() {
+    export LOG_LEVEL="DEBUG"
+    install-dev && \
+    source venv/bin/activate && python -m pytest tests
+}
+
+_confirm_previous_command() {
+    if [ $? -ne 0 ]; then
+        echo "Stopping the script..."
+        exit 1
+    fi
+}
+
+$@

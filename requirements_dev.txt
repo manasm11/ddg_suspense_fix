@@ -1,0 +1,5 @@
+isort
+black
+pydocstyle
+flake8
+pytest
