@@ -1,9 +1,16 @@
 """Entry point to parse_excels."""
-from .read_excel import TransactionsExcel
+import jsonschema
+
+from . import constants as c
+from .transactions_excel import TransactionsExcel
+from .transactions_json import TransactionsJson
 
 
 def generate_json_from_excels(inExcelDirectory: str, outJsonFile: str):
     """Convert excel row to a json file."""
-    excelReader = TransactionsExcel(inExcelDirectory)
-    for row in excelReader.rows():
-        print(row)
+    excel = TransactionsExcel(inExcelDirectory)
+    json_ = TransactionsJson(outJsonFile)
+    for row in excel.rows():
+        jsonschema.validate(row, c.ROW_SCHEMA)
+        json_.add(row)
+    json_.save()
