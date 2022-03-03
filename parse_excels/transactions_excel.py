@@ -56,8 +56,20 @@ class TransactionsExcel:
     def __desc_details(self, d):
         jsonschema.validate(d, c.JSON_SCHEMA)
         if d["withdraw"]:
+            # INF/NEFT/{REF_NO}/{IFSC}/{NAME}
+            # CLG/{NAME}/{BANK}
+            # MMT/IMPS/{REF_NO}/{ACC_NO}/{NAME}/{IFSC}
+            # TRF/{NAME}/{BANK}
+            # REJECT:{CHQ_NO}:{REASON}
+            # GIB/{REF_NO}/{REMARK}/{REF_NO_2}
             return d
         elif d["deposit"]:
+            # NEFT-{REF_NO}-{NAME}-{REMARK}-{ACC_NO}-{IFSC}
+            # CLG/{NAME}/{CHQ_NO}/{BANK_NAME}/{DEPOSIT_DATE}
+            # MMT/IMPS/{REF_NO}/{REMARK}/{NAME}/{BANK_NAME}
+            # RTGS-{REF_NO}-{NAME}-{ACC_NO}-{IFSC}
+            # BY CASH -KANPUR - BIRHANA ROAD
+            # UPI/{REF_NO}/{REMARK}/{NAME}/{BANK}
             return d
         else:
             raise Exception("Neither withdraw nor deposit.")
