@@ -15,6 +15,7 @@ class TransactionsJson:
         self._json = []
         self._ids = set()
         if os.path.exists(jsonFile):
+            print(f"Reading json file {jsonFile}")
             with open(jsonFile, "r") as f:
                 self._json = json.load(f)
                 assert isinstance(self._json, list), f"Invalid json file: '{jsonFile}'"

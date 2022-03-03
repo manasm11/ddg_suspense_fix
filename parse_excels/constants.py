@@ -1,4 +1,8 @@
 """Constants to be used by modules."""
+
+BANK_CHARGES = "BANK CHARGES"
+GST = "GST"
+
 JSON_SCHEMA = {
     "definitions": {},
     "$schema": "http://json-schema.org/draft-07/schema#",
