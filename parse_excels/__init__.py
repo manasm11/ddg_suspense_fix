@@ -11,6 +11,6 @@ def generate_json_from_excels(inExcelDirectory: str, outJsonFile: str):
     excel = TransactionsExcel(inExcelDirectory)
     json_ = TransactionsJson(outJsonFile)
     for row in excel.rows():
-        jsonschema.validate(row, c.ROW_SCHEMA)
+        jsonschema.validate(row, c.JSON_SCHEMA)
         json_.add(row)
     json_.save()

@@ -19,7 +19,7 @@ class TransactionsJson:
                 self._json = json.load(f)
                 assert isinstance(self._json, list), f"Invalid json file: '{jsonFile}'"
         for row in self._json:
-            jsonschema.validate(row, c.ROW_SCHEMA)
+            jsonschema.validate(row, c.JSON_SCHEMA)
 
     def exists(self, row: dict) -> bool:
         """Check if the row exists."""
@@ -32,7 +32,7 @@ class TransactionsJson:
 
     def add(self, row):
         """Add the row if it already exists."""
-        jsonschema.validate(row, c.ROW_SCHEMA)
+        jsonschema.validate(row, c.JSON_SCHEMA)
         if not self.exists(row):
             self._ids.add(row["id"])
             self._json.append(row)
