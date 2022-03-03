@@ -2,8 +2,11 @@
 import os
 from glob import glob
 
+import jsonschema
 import pandas as pd
 from loguru import logger
+
+from . import constants as c
 
 """Handle transactions excel file."""
 
@@ -38,7 +41,8 @@ class TransactionsExcel:
         return float(numberString)
 
     def _rowToDict(self, row):
-        return {
+        jsonschema.validate(row, c.EXCEL_SCHEMA)
+        result = {
             "date": row["Value Date"],
             "chqno": row["Cheque. No./Ref. No."],
             "desc": row["Transaction Remarks"],
@@ -46,3 +50,14 @@ class TransactionsExcel:
             "withdraw": self.__to_float(row["Withdrawal Amt (INR)"]),
             "deposit": self.__to_float(row["Deposit Amt (INR)"]),
         }
+        result.update(self.__desc_details(result))
+        return result
+
+    def __desc_details(self, d):
+        jsonschema.validate(d, c.JSON_SCHEMA)
+        if d["withdraw"]:
+            return d
+        elif d["deposit"]:
+            return d
+        else:
+            raise Exception("Neither withdraw nor deposit.")
