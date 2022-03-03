@@ -206,15 +206,16 @@ class TransactionsExcel:
             "DSB SERV CHGS ": lambda desc: c.BANK_CHARGES,
             "SGST202007091963970550": lambda desc: c.GST,
             "CGST202007091963970552": lambda desc: c.GST,
-            "_BRK_KAN_": lambda desc: lambda desc: self.__remove_substrings(
-                desc, "_", [0, 1]
-            ),
+            "_BRK_KAN_": lambda desc: self.__remove_substrings(desc, "_", [0, 1]),
             "CASH DEP CHG ": lambda desc: c.BANK_CHARGES,
             "RTGS/": lambda desc: self.__remove_substrings(desc, "/", [1, 4]),
         }
         for substring in substring_funcs:
             if substring in desc:
                 d["party_key"] = substring_funcs[substring](desc)
+                assert isinstance(
+                    d["party_key"], str
+                ), f"party_key for {d} is of type {type(d['party_key'])}"
                 break
         else:
             raise Exception(f"Unable to handle withdraw description for {d}")

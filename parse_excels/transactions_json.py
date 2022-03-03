@@ -29,6 +29,9 @@ class TransactionsJson:
     def save(self):
         """Save the updated json."""
         with open(self._jsonFile, "w") as f:
+            assert isinstance(
+                self._json, list
+            ), f"self_json is of type {type(self._json)}"
             json.dump(self._json, f)
 
     def add(self, row):
