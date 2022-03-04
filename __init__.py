@@ -4,7 +4,7 @@ import questions as q
 from parse_excels import generate_json_from_excels
 
 
-def main():
+def main_questionary():
     """First function to be executed in the project."""
     choices = {
         "generate transactions.json from icici excels": generate_transactions_json,
@@ -36,4 +36,4 @@ def update_transactions_json():
 
 
 if __name__ == "__main__":
-    main()
+    main_questionary()
