@@ -2,7 +2,7 @@
 import jsonschema
 
 from . import constants as c
-from .transactions_excel import TransactionsExcel
+from .transactions_excel_icici import TransactionsExcel
 from .transactions_json import TransactionsJson
 
 
