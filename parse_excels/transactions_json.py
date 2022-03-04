@@ -32,6 +32,7 @@ class TransactionsJson:
             assert isinstance(
                 self._json, list
             ), f"self_json is of type {type(self._json)}"
+            print(f"Saving {self._jsonFile}")
             json.dump(self._json, f)
 
     def add(self, row):

@@ -103,7 +103,9 @@ class TransactionsExcel:
         substring_funcs = {
             "NEFT-": lambda desc: self.__remove_substrings(desc, "-", [1, 3]),
             "CLG/": lambda desc: self.__remove_substrings(desc, "/", [2, 4]),
-            "MMT/IMPS/": lambda desc: self.__remove_substrings(desc, "/", [2, 3]),
+            "MMT/IMPS/": lambda desc: self.__remove_substrings(desc, "/", [2, 3])
+            if desc.count("/") == 5
+            else self.__remove_substrings(desc, "/", [2]),
             "RTGS-": lambda desc: self.__remove_substring(desc, "-", 1),
             "BY CASH": lambda desc: desc,
             "UPI/": lambda desc: self.__remove_substrings(desc, "/", [1, 2, 5]),
@@ -143,6 +145,7 @@ class TransactionsExcel:
     def __handle_withdraw_desc(self, d):
         # INF/NEFT/{REF_NO}/{IFSC}/{NAME}
         # MMT/IMPS/{REF_NO}/{ACC_NO}/{NAME}/{IFSC}
+        # MMT/IMPS/205312507380/KUMAR MEDI/CANARA BANK
         # INF/INFT/{REF_NO}/{NAME}
         # CLG/{NAME}/{BANK}
         # TRF/{NAME}/{BANK}
