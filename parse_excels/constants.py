@@ -54,7 +54,7 @@ JSON_SCHEMA = {
     },
 }
 
-EXCEL_SCHEMA = {
+EXCEL_ICICI_SCHEMA = {
     "definitions": {},
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://example.com/object1646212592.json",

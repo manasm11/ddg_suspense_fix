@@ -1,4 +1,4 @@
-"""Handle transactions excel file."""
+"""Handle transactions from icici excel files."""
 import os
 from collections import defaultdict
 from glob import glob
@@ -10,11 +10,11 @@ from loguru import logger
 
 from . import constants as c
 
-"""Handle transactions excel file."""
+"""Handle transactions from icici excel files."""
 
 
-class TransactionsExcel:
-    """Handle transactions excel file."""
+class TransactionsExcelIcici:
+    """Handle transactions from icici excel files."""
 
     def __init__(self, excelDirectory: str):
         self._excelDirectory = excelDirectory
@@ -43,7 +43,7 @@ class TransactionsExcel:
         return float(numberString)
 
     def _rowToDict(self, row):
-        jsonschema.validate(dict(row), c.EXCEL_SCHEMA)
+        jsonschema.validate(dict(row), c.EXCEL_ICICI_SCHEMA)
         result = {
             "date": row["Value Date"],
             "chqno": row["Cheque. No./Ref. No."],
@@ -106,7 +106,7 @@ class TransactionsExcel:
             "MMT/IMPS/": lambda desc: self.__remove_substrings(desc, "/", [2, 3])
             if desc.count("/") == 5
             else self.__remove_substrings(desc, "/", [2]),
-            "RTGS-": lambda desc: self.__remove_substring(desc, "-", 1),
+            "RTGS-": lambda desc: self.__remove_substrings(desc, "-", [1]),
             "BY CASH": lambda desc: desc,
             "UPI/": lambda desc: self.__remove_substrings(desc, "/", [1, 2, 5]),
             "INF/INFT/": lambda desc: self.__remove_substrings(desc, "/", [2, 3]),
@@ -137,6 +137,7 @@ class TransactionsExcel:
         }
         for substring in substring_funcs:
             if substring in desc:
+                self._sep = ""
                 d["party_key"] = substring_funcs[substring](desc)
                 break
         else:
@@ -180,9 +181,9 @@ class TransactionsExcel:
         desc: str = d["desc"]
 
         substring_funcs = {
-            "INF/NEFT/": lambda desc: self.__remove_substring(desc, "/", 2),
-            "MMT/IMPS/": lambda desc: self.__remove_substring(desc, "/", 2),
-            "INF/INFT/": lambda desc: self.__remove_substring(desc, "/", 2),
+            "INF/NEFT/": lambda desc: self.__remove_substrings(desc, "/", [2]),
+            "MMT/IMPS/": lambda desc: self.__remove_substrings(desc, "/", [2]),
+            "INF/INFT/": lambda desc: self.__remove_substrings(desc, "/", [2]),
             "CLG/": lambda desc: self.chq_descs.__setitem__(d["chqno"], desc) or desc,
             "TRF/": lambda desc: self.chq_descs.__setitem__(d["chqno"], desc) or desc,
             "REJECT:": lambda desc: self.chq_descs[desc.split(":")[1]],
@@ -202,8 +203,8 @@ class TransactionsExcel:
             "CHQ RTN ": lambda desc: c.BANK_CHARGES,
             "SGST201912051476755019": lambda desc: c.GST,
             "CGST201912051476755023": lambda desc: c.GST,
-            "NEFT:": lambda desc: self.__remove_substring(desc, "/", 0),
-            "RTGS:": lambda desc: self.__remove_substring(desc, "/", 0),
+            "NEFT:": lambda desc: self.__remove_substrings(desc, "/", [0]),
+            "RTGS:": lambda desc: self.__remove_substrings(desc, "/", [0]),
             "RAUNAK SALES & MARKETING": lambda desc: desc,
             "INS NO:": lambda desc: desc,
             "DSB SERV CHGS ": lambda desc: c.BANK_CHARGES,
@@ -215,26 +216,22 @@ class TransactionsExcel:
         }
         for substring in substring_funcs:
             if substring in desc:
+                self._sep = ""
                 d["party_key"] = substring_funcs[substring](desc)
+                d["sep"] = self._sep
                 assert isinstance(
                     d["party_key"], str
                 ), f"party_key for {d} is of type {type(d['party_key'])}"
+                assert isinstance(d["sep"], str), f"sep for {d} is of type {type(d['sep'])}"
                 break
         else:
             raise Exception(f"Unable to handle withdraw description for {d}")
-
-    def __remove_substring(self, string: str, seperator: str, index: int):
-        assert (
-            seperator in string
-        ), f"String '{string}' doesn't contains seperator '{seperator}'"
-        return seperator.join(
-            [ss for i, ss in enumerate(string.split(seperator)) if i != index]
-        )
 
     def __remove_substrings(self, string: str, seperator: str, indexes: List[int]):
         assert (
             seperator in string
         ), f"String '{string}' doesn't contains seperator '{seperator}'"
+        self._sep = seperator
         return seperator.join(
             [ss for i, ss in enumerate(string.split(seperator)) if i not in indexes]
         )

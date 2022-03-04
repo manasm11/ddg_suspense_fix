@@ -1,7 +1,7 @@
 """Entry point of the project."""
 
 import questions as q
-from parse_excels import generate_json_from_excels
+from parse_excels import generate_json_from_icici_excels
 
 
 def main_questionary():
@@ -19,7 +19,7 @@ def main_questionary():
 def generate_transactions_json():
     """Initiate generation of transactions json from icici excel files."""
     answers = q.GENERATE_TRANSACTIONS.ask()
-    generate_json_from_excels(
+    generate_json_from_icici_excels(
         inExcelDirectory=answers["input_excels_directory"],
         outJsonFile=answers["output_file"],
     )

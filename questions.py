@@ -2,7 +2,7 @@ import questionary
 
 
 def MAIN(choices):
-    questionary.select("What to do ?", choices=choices)
+    return questionary.select("What to do ?", choices=choices)
 
 
 GENERATE_TRANSACTIONS = questionary.form(
