@@ -3,6 +3,13 @@
 BANK_CHARGES = "BANK CHARGES"
 GST = "GST"
 
+SUSPENSE_ACC = "SUSPENSE A/C"
+CASH_ACC = "CASH"
+DATE_FORMAT = "%d/%b/%Y"
+
+ICICI_ACC = "ICICI BANK A/C NO.192105001218"
+PNB_ACC = "PUNJAB NATIONAL BANK A/C NO.0.89076"
+
 JSON_SCHEMA = {
     "definitions": {},
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -183,3 +190,18 @@ EXCEL_MARG_SCHEMA = {
         },
     },
 }
+
+MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]

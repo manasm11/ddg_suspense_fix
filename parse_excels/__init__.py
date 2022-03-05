@@ -25,16 +25,45 @@ def update_transactions_json_from_marg_excels(inExcelDirectory: str, jsonFile: s
     for item in json_.items():
         jsonschema.validate(item, c.JSON_SCHEMA)
         # TODO make function handle withdraws also
-        if item["deposit"] and not _is_shop_cash_deposit(item["desc"]):
-            row = excel.row_by_item(item)
-            logger.debug(f"Found row {row}")
-            assert row, f"Row not found for {item}"
-            json_.update(item, {"party_name": row["PARTICULARS"]})
+        is_valid_entry = (
+            item["deposit"]
+            and excel.is_date_in_range(item["date"])
+            and not _is_return_or_reject(item["desc"])
+            and not _is_cheque(item["desc"])
+        )
+        if not is_valid_entry:
+            continue
+        party_name = _get_party_name(excel, item)
+        json_.update(item, {"party_name": party_name})
     json_.save()
 
 
-def _is_shop_cash_deposit(desc):
-    for substring in ["-", "BY CASH", "KANPUR", "BIRHANA ROAD"]:
-        if substring not in desc:
-            return False
-    return True
+def _get_party_name(excel: TransactionsExcelMarg, item: dict):
+    if _is_shop_cash_deposit(item["desc"]):
+        party_name = c.CASH_ACC
+    elif _is_pnb_deposit(item["desc"]):
+        party_name = c.PNB_ACC
+    else:
+        row = excel.row_by_item(item)
+        not row and logger.error(f"No row found for item {item}")
+        party_name = row["PARTICULARS"] if row else c.SUSPENSE_ACC
+    return party_name
+
+
+def _is_shop_cash_deposit(desc: str):
+    return (
+        all([s in desc for s in ["-", "BY CASH", "KANPUR", "BIRHANA ROAD"]])
+        or desc == "THIRD PARTY DEPOSIT"
+    )
+
+
+def _is_pnb_deposit(desc: str):
+    return "1882002100089076-PUNB0025500" in desc
+
+
+def _is_return_or_reject(desc: str):
+    return "REJECT" in desc or "RETURN" in desc
+
+
+def _is_cheque(desc: str):
+    return desc.startswith("CLG")

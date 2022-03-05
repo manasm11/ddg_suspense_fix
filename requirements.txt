@@ -5,3 +5,4 @@ xlwt
 xlrd
 jsonschema
 questionary
+thefuzz

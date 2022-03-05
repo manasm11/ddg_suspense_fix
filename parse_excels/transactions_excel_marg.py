@@ -1,11 +1,13 @@
 """Handle transactions from marg excel files."""
 import os
 from collections import defaultdict
+from datetime import datetime, timedelta
 from glob import glob
 
 import jsonschema
 import pandas as pd
 from loguru import logger
+from thefuzz import fuzz
 from xlrd import open_workbook
 
 from . import constants as c
@@ -21,8 +23,17 @@ class TransactionsExcelMarg:
 
     def __init__(self, excelDirectory: str):
         self._excelDirectory = excelDirectory
+        logger.debug("Generating valid dates")
         self.__generate_valid_dates()
+        logger.debug("Generating hashes")
         self.__generate_hashes()
+
+    def is_date_in_range(self, date: str) -> bool:
+        """Check if date is in the current finanial year or not."""
+        financial_year_start = datetime(self._start_year, 4, 1)
+        financial_year_end = datetime(self._end_year, 3, 31)
+        date = datetime.strptime(date, c.DATE_FORMAT)
+        return financial_year_start <= date <= financial_year_end
 
     def _rows(self):
         """Iterate over all rows in all excel files."""
@@ -54,37 +65,68 @@ class TransactionsExcelMarg:
     def row_by_item(self, item):
         """Return the row corresponding the item."""
         jsonschema.validate(item, c.JSON_SCHEMA)
-        item_date_amount = f"{item['date']}_{item['deposit'] - item['withdraw']}"
-        if item_date_amount not in self._date_amount:
-            return None
-        rows = self._date_amount[item_date_amount]
-        if len(rows) == 1:
+        amount = item["deposit"] - item["withdraw"]
+        rows = self._get_rows(item, amount)
+        unique_particulars = {row["PARTICULARS"] for row in rows}
+        if len(unique_particulars) == 1:
             return rows[0]
-        else:
-            print(f"For item={item}")
-            print(f"Rows = {rows}")
-            raise NotImplementedError("Unable to handle same amount on same days.")
+        item["sep"] = " " if not item["sep"] else item["sep"]
+        particulars = ""
+        for row in rows:
+            keys = item["party_key"].split(item["sep"])
+            match = fuzz.partial_token_set_ratio(row["PARTICULARS"], item["desc"])
+            if all([key in row["PARTICULARS"] for key in keys]) or match == 100:
+                return row
+            particulars = (
+                particulars + "    or    " + row["PARTICULARS"]
+                if particulars
+                else row["PARTICULARS"]
+            )
+        return {"PARTICULARS": particulars} if particulars else None
+
+    def _get_rows(self, item, amount):
+        for i in range(3):
+            date = self._date_plus_day(item["date"], i)
+            item_date_amount = f"{date}_{amount}"
+            i and logger.debug(f"Checking one day after {item_date_amount}")
+            if item_date_amount in self._date_amount:
+                break
+            logger.debug(f"date_amount {item_date_amount} not found")
+        rows = self._date_amount[item_date_amount]
+        return rows
+
+    def _date_plus_day(self, date: str, days: int):
+        item_date = datetime.strptime(date, c.DATE_FORMAT)
+        item_date_plus_one = item_date + timedelta(days=days)
+        date_plus_one_day = item_date_plus_one.strftime(c.DATE_FORMAT)
+        return date_plus_one_day
 
     def _is_row(self, index):
         date = self._df.loc[index, "DATE"].strip()
-        return (
-            date in self.__valid_dates
-            and self._df.loc[index + 1, "PARTICULARS"].strip()
-            == "ICICI BANK A/C NO.192105001218"
-        )
+        if date not in self.__valid_dates:
+            return False
+        nextParticular = self._df.loc[index + 1, "PARTICULARS"].strip()
+        if nextParticular == c.ICICI_ACC:
+            return True
+        if (
+            nextParticular == "TOTAL"
+            and self._df.loc[index + 9, "PARTICULARS"].strip() == c.ICICI_ACC
+        ):
+            return True
+        return False
 
     def __generate_hashes(self):
         self._date_amount = defaultdict(list)
         for row in self._rows():
             jsonschema.validate(row, c.EXCEL_MARG_SCHEMA)
+            # DEBIT means withdraw and CREDIT means deposit
             date_amount = f"{row['DATE']}_{row['CREDIT'] - row['DEBIT']}"
             self._date_amount[date_amount].append(row)
+        logger.debug(f"date_amounts found: {list(self._date_amount.keys())}")
 
-    def _rowToDict(self, index):
+    def _rowToDict(self, index) -> dict:
         result = dict(self._df.loc[index])
-        # DEBIT : withdraw
         result["DEBIT"] = float(result["DEBIT"]) if result["DEBIT"] else 0
-        # CREDIT : deposit
         result["CREDIT"] = float(result["CREDIT"]) if result["CREDIT"] else 0
         date_split = result["DATE"].split()
         day = date_split[1] if len(date_split[1]) == 2 else f"0{date_split[1]}"
@@ -92,35 +134,10 @@ class TransactionsExcelMarg:
         year = self._end_year if mon in ["Jan", "Feb", "Mar"] else self._start_year
         result["DATE"] = f"{day}/{mon}/{year}"
         return result
-        # jsonschema.validate(dict(row), c.EXCEL_ICICI_SCHEMA)
-        # result = {
-        #     "date": row["Value Date"],
-        #     "chqno": row["Cheque. No./Ref. No."],
-        #     "desc": str(row["Transaction Remarks"]).upper(),
-        #     "id": row["Tran. Id"],
-        #     "withdraw": self.__to_float(row["Withdrawal Amt (INR)"]),
-        #     "deposit": self.__to_float(row["Deposit Amt (INR)"]),
-        # }
-        # self.__desc_details(result)
-        # return result
 
     def __generate_valid_dates(self):
-        months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ]
         self.__valid_dates = []
-        for month in months:
+        for month in c.MONTHS:
             for date in range(1, 10):
                 self.__valid_dates.append(f"{month}  {date}")
             for date in range(10, 32):

@@ -8,6 +8,10 @@ from parse_excels import (
     update_transactions_json_from_marg_excels,
 )
 
+logger.add("logs/{time}.log", level="DEBUG")
+logger.add("logs/warns_{time}.log", level="WARNING")
+logger.add("logs/errors_{time}.log", level="ERROR")
+
 
 def main_questionary():
     """First function to be executed in the project."""
