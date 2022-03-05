@@ -141,6 +141,13 @@ class TransactionsExcelIcici:
             if substring in desc:
                 self._sep = ""
                 d["party_key"] = substring_funcs[substring](desc)
+                d["sep"] = self._sep
+                assert isinstance(
+                    d["party_key"], str
+                ), f"party_key for {d} is of type {type(d['party_key'])}"
+                assert isinstance(
+                    d["sep"], str
+                ), f"sep for {d} is of type {type(d['sep'])}"
                 break
         else:
             raise Exception(f"Unable to handle deposit description for {d}")

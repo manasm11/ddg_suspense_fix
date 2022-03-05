@@ -64,10 +64,7 @@ push() {
     read QUIT
     [ "${QUIT}" = "y" ] && git commit -a
     _confirm_previous_command
-    echo -n "Enter branch (main): "
-    read BRANCH
-    BRANCH=${BRANCH:-main}
-    git push origin ${BRANCH}
+    git push origin $(git branch --show-current)
 }
 
 start() {

@@ -43,7 +43,7 @@ class TransactionsJson:
         if not self.exists(row):
             self._ids.add(row["id"])
             self._json.append(row)
-        self._check_and_save()
+            self._check_and_save()
 
     def update(self, item: dict, data: dict):
         """Update the row the the data."""
@@ -57,5 +57,5 @@ class TransactionsJson:
 
     def _check_and_save(self):
         self.__counter += 1
-        if not self.__counter % 100:
+        if not self.__counter % 1000:
             self.save()

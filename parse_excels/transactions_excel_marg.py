@@ -61,6 +61,8 @@ class TransactionsExcelMarg:
         if len(rows) == 1:
             return rows[0]
         else:
+            print(f"For item={item}")
+            print(f"Rows = {rows}")
             raise NotImplementedError("Unable to handle same amount on same days.")
 
     def _is_row(self, index):
