@@ -171,13 +171,13 @@ EXCEL_MARG_SCHEMA = {
         "DEBIT": {
             "$id": "#root/DEBIT",
             "title": "Debit",
-            "type": "integer",
+            "type": "number",
             "default": 0,
         },
         "CREDIT": {
             "$id": "#root/CREDIT",
             "title": "Credit",
-            "type": "string",
+            "type": "number",
             "default": "",
             "pattern": "^.*$",
         },
