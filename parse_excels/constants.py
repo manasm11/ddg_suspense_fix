@@ -3,6 +3,13 @@
 BANK_CHARGES = "BANK CHARGES"
 GST = "GST"
 
+SUSPENSE_ACC = "SUSPENSE A/C"
+CASH_ACC = "CASH"
+DATE_FORMAT = "%d/%b/%Y"
+
+ICICI_ACC = "ICICI BANK A/C NO.192105001218"
+PNB_ACC = "PUNJAB NATIONAL BANK A/C NO.0.89076"
+
 JSON_SCHEMA = {
     "definitions": {},
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -145,3 +152,56 @@ EXCEL_ICICI_SCHEMA = {
         },
     },
 }
+
+EXCEL_MARG_SCHEMA = {
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example.com/object1646458004.json",
+    "title": "Root",
+    "type": "object",
+    "required": ["DATE", "PARTICULARS", "DEBIT", "CREDIT"],
+    "properties": {
+        "DATE": {
+            "$id": "#root/DATE",
+            "title": "Date",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$",
+        },
+        "PARTICULARS": {
+            "$id": "#root/PARTICULARS",
+            "title": "Particulars",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$",
+        },
+        "DEBIT": {
+            "$id": "#root/DEBIT",
+            "title": "Debit",
+            "type": "number",
+            "default": 0,
+        },
+        "CREDIT": {
+            "$id": "#root/CREDIT",
+            "title": "Credit",
+            "type": "number",
+            "default": "",
+            "pattern": "^.*$",
+        },
+    },
+}
+
+MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]

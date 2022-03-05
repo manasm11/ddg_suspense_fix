@@ -25,9 +25,11 @@ class TransactionsExcelIcici:
             "Withdrawal Amt (INR)": object,
             "Deposit Amt (INR)": object,
         }
-        xlsx_files = glob(os.path.join(self._excelDirectory, "*.xlsx"))
-        xls_files = glob(os.path.join(self._excelDirectory, "*.xls"))
-        xl_files = xlsx_files + xls_files
+        xl_files = []
+        xl_files += glob(os.path.join(self._excelDirectory, "*.xlsx"))
+        xl_files += glob(os.path.join(self._excelDirectory, "*.XLSX"))
+        xl_files += glob(os.path.join(self._excelDirectory, "*.xls"))
+        xl_files += glob(os.path.join(self._excelDirectory, "*.XLS"))
         for file in xl_files:
             logger.info(f"Parsing {file}")
             df = pd.read_excel(file, skiprows=16, dtype=dtype, na_filter=False)
@@ -139,6 +141,13 @@ class TransactionsExcelIcici:
             if substring in desc:
                 self._sep = ""
                 d["party_key"] = substring_funcs[substring](desc)
+                d["sep"] = self._sep
+                assert isinstance(
+                    d["party_key"], str
+                ), f"party_key for {d} is of type {type(d['party_key'])}"
+                assert isinstance(
+                    d["sep"], str
+                ), f"sep for {d} is of type {type(d['sep'])}"
                 break
         else:
             raise Exception(f"Unable to handle deposit description for {d}")
@@ -222,7 +231,9 @@ class TransactionsExcelIcici:
                 assert isinstance(
                     d["party_key"], str
                 ), f"party_key for {d} is of type {type(d['party_key'])}"
-                assert isinstance(d["sep"], str), f"sep for {d} is of type {type(d['sep'])}"
+                assert isinstance(
+                    d["sep"], str
+                ), f"sep for {d} is of type {type(d['sep'])}"
                 break
         else:
             raise Exception(f"Unable to handle withdraw description for {d}")
