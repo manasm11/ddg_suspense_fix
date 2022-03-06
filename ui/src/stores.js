@@ -18,4 +18,4 @@ export const server_working = readable(false, function start(set) {
   };
 });
 
-export const is_login = writable(false);
+export const is_login = writable(true);

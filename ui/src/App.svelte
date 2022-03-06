@@ -1,10 +1,8 @@
 <script>
-  import { server_working } from "./stores";
-  import PasswordCard from "./lib/PasswordCard.svelte";
-  import { onMount } from "svelte";
-  let input_ref;
-
-  onMount(() => input_ref.focus());
+  import { server_working, is_login } from "./stores";
+  import SingleInputCard from "./lib/SingleInputCard.svelte";
+  import PartyList from "./lib/PartyList.svelte";
+  let possible_parties = [];
 </script>
 
 <main class="flex flex-col bg-slate-200 h-screen w-screen">
@@ -13,6 +11,12 @@
   {/if}
 
   <div class="self-center mt-16">
-    <PasswordCard bind:input_ref />
+    {#if !$is_login}
+      <SingleInputCard type="password" />
+    {:else}
+      <SingleInputCard type="desc" bind:possible_parties />
+    {/if}
   </div>
+
+  <PartyList parties={possible_parties} />
 </main>

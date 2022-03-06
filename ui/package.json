@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "watch-tailwind": "npx tailwindcss -i ./tailwind.css -o ./public/global.css --watch",
     "watch-svelte": "rollup -c -w",
-    "watch-server": "../venv/bin/python -m uvicorn main:app --reload",
+    "watch-server": "echo 'BEWARE REMOVED SERVER' || ../venv/bin/python -m uvicorn main:app --reload",
     "dev": "concurrently npm:watch-*",
     "start": "sirv public --no-clear"
   },
