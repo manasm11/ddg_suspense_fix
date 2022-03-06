@@ -4,5 +4,9 @@ venv/
 .pytest_cache/
 *.xls
 *.xlsx
-*.json
+transaction*.json
 *.log
+node_modules/
+build/
+package-lock.json
+.DS_Store
