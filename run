@@ -75,6 +75,14 @@ start() {
     python __init__.py
 }
 
+ui-dev() {
+    cd ui
+    _confirm_previous_command
+    [ -e node_modules ] || npm i
+    _confirm_previous_command
+    npm run dev
+}
+
 test() {
     export LOG_LEVEL="DEBUG"
     install-dev && \
