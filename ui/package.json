@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
-    "dev": "concurrently 'npx tailwindcss -i ./tailwind.css -o ./public/global.css --watch' 'rollup -c -w'",
+    "watch-tailwind": "npx tailwindcss -i ./tailwind.css -o ./public/global.css --watch",
+    "watch-svelte": "rollup -c -w",
+    "watch-server": "../venv/bin/python -m uvicorn main:app --reload",
+    "dev": "concurrently npm:watch-*",
     "start": "sirv public --no-clear"
   },
   "devDependencies": {
