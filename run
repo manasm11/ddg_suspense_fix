@@ -88,7 +88,11 @@ ui() {
     _confirm_previous_command
     [ -e node_modules ] || npm i
     _confirm_previous_command
-    npm run prod
+    select selection in dev prod local
+    do
+        npm run $selection
+        break
+    done
 }
 
 

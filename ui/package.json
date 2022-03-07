@@ -9,8 +9,11 @@
     "watch-server": "../venv/bin/python -m uvicorn main:app --reload",
     "prod-svelte": "rollup -c && sirv public --no-clear --host 0.0.0.0",
     "prod-server": "../venv/bin/python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "local-svelte":"rollup -c && sirv public --no-clear",
+    "local-server": "../venv/bin/python -m uvicorn main:app", 
     "dev": "concurrently npm:watch-*",
     "prod": "concurrently npm:prod-*",
+    "local": "concurrently npm:local-*",
     "start": "sirv public --no-clear"
   },
   "devDependencies": {
