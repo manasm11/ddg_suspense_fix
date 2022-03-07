@@ -1,6 +1,5 @@
 export default {
-  SERVER_URL: "https://www.google.com/",
-  // SERVER_URL: "http://localhost:8000",
+  SERVER_URL: "http://localhost:8000",
   SERVER_CHECK_INTERVAL_SECONDS: 120,
   SINGLE_INPUT_CARD_DETAILS: {
     password: {

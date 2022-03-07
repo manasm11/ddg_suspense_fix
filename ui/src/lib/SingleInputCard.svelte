@@ -7,7 +7,7 @@
   import { onMount } from "svelte";
   $: cardDetails = c.SINGLE_INPUT_CARD_DETAILS[type];
 
-  let input_ref
+  let input_ref;
   let invalid_password = false;
 
   onMount(() => input_ref.focus());
@@ -25,8 +25,9 @@
       };
     }
     if (type === "desc") {
-      return () => {
-        possible_parties = u.get_parties(input_ref.value);
+      return async () => {
+        possible_parties = await u.get_parties(input_ref.value);
+        console.log(possible_parties);
         _common();
       };
     }
@@ -47,5 +48,8 @@
   {#if invalid_password}
     <p class="text-red-500 text-sm">Invalid Password</p>
   {/if}
-  <button class="bg-blue-500 text-white p-2 hover:bg-blue-600 md:hidden rounded-lg mt-3" type="submit">Submit</button>
+  <button
+    class="bg-blue-500 text-white p-2 hover:bg-blue-600 md:hidden rounded-lg mt-3"
+    type="submit">Submit</button
+  >
 </form>

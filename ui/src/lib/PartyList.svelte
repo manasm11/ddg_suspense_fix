@@ -19,7 +19,7 @@
   >
     {#each parties as party}
       <div class="flex justify-between p-4">
-        <div class="text-lg text-center">
+        <div class="text-lg">
           {party}
         </div>
         <button
