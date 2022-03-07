@@ -37,9 +37,9 @@ install() {
     _confirm_previous_command
     source venv/bin/activate
     _confirm_previous_command
-    pip install --upgrade pip > /dev/null
+    pip install --upgrade pip >/dev/null
     echo "Installing dependencies..."
-    pip install -r requirements.txt > /dev/null
+    pip install -r requirements.txt >/dev/null
 }
 
 install-dev() {
@@ -49,11 +49,11 @@ install-dev() {
     _confirm_previous_command
     source venv/bin/activate
     _confirm_previous_command
-    pip install --upgrade pip > /dev/null
+    pip install --upgrade pip >/dev/null
     echo "Installing dev dependencies..."
-    pip install -r requirements_dev.txt > /dev/null
+    pip install -r requirements_dev.txt >/dev/null
     echo "Installing dependencies..."
-    pip install -r requirements.txt > /dev/null
+    pip install -r requirements.txt >/dev/null
 }
 
 push() {
@@ -75,31 +75,21 @@ start() {
     python __init__.py
 }
 
-ui-dev() {
+_ui() {
     cd ui
     _confirm_previous_command
     [ -e node_modules ] || npm i
     _confirm_previous_command
-    npm run dev
-}
-
-ui() {
-    cd ui
-    _confirm_previous_command
-    [ -e node_modules ] || npm i
-    _confirm_previous_command
-    select selection in dev prod local
-    do
+    select selection in dev prod local; do
         npm run $selection
         break
     done
 }
 
-
 test() {
     export LOG_LEVEL="DEBUG"
-    install-dev && \
-    source venv/bin/activate && python -m pytest tests
+    install-dev &&
+        source venv/bin/activate && python -m pytest tests
 }
 
 _confirm_previous_command() {

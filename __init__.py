@@ -50,7 +50,7 @@ def update_transactions_json():
 
 def start_frontend():
     """Start frontend."""
-    os.system("./run ui")
+    os.system("./run _ui")
 
 
 if __name__ == "__main__":
