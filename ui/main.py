@@ -6,6 +6,9 @@ from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+MUST_HEADER = "g52l&cc^5l@@sREu(VY+i/Tpf@k7j3+lG9Y8ERUy0K+aE-Ikpyn`Cf8`SX6\
+s&7aFf(MXFv/(%~=)`MYam*V-)(*qUkYnVWUPQBU@o^rAXW7YS04gK`4vnTxjwmRWc-1#"
+
 logger.add("logs/debug_{time}.log", level="DEBUG")
 logger.add("logs/error_{time}.log", level="ERROR")
 
@@ -84,9 +87,10 @@ app.add_middleware(
 def check_header(func):
     """Check Header."""
 
-    def _(must_header=Header(None), *args, **kwargs):
-        if must_header == "JAI MATA DI":
-            return func(*args, **kwargs)
+    async def _(desc, must_header=Header(None)):
+        if must_header == MUST_HEADER:
+            return await func(desc)
+        logger.warning(f"Invalid Header: {must_header}")
         return []
 
     return _
@@ -102,9 +106,9 @@ async def root():
 
 
 @app.get("/possible-parties")
-async def possible_parties(desc, must_header=Header(None)):
+@check_header
+async def possible_parties(desc):
     """Get possible_parties with the given desc."""
-    logger.info(f"Header {must_header}")
     logger.info(f"desc={desc}")
     search_result = party_map.search(desc)
     logger.debug(f"search_result={list(search_result)}")

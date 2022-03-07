@@ -7,9 +7,12 @@ export default {
   check_password: (password) => password === "HEALLO", // TODO: Improve logic to check password
   get_parties: async (query) =>
     query
-      ? await fetch(
-          join(c.SERVER_URL, "possible-parties") + `?desc=${query}`
-        ).then((res) => res.json())
+      ? await fetch(join(c.SERVER_URL, "possible-parties") + `?desc=${query}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Must-Header": c.MUST_HEADER,
+          },
+        }).then((res) => res.json())
       : [],
   join,
   strip,
