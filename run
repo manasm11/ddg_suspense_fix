@@ -83,6 +83,15 @@ ui-dev() {
     npm run dev
 }
 
+ui() {
+    cd ui
+    _confirm_previous_command
+    [ -e node_modules ] || npm i
+    _confirm_previous_command
+    npm run prod
+}
+
+
 test() {
     export LOG_LEVEL="DEBUG"
     install-dev && \

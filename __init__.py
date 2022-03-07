@@ -1,5 +1,7 @@
 """Entry point of the project."""
 
+import os
+
 from loguru import logger
 
 import questions as q
@@ -48,7 +50,7 @@ def update_transactions_json():
 
 def start_frontend():
     """Start frontend."""
-    pass
+    os.system("./run ui")
 
 
 if __name__ == "__main__":

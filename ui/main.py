@@ -2,7 +2,7 @@
 import json
 from collections import defaultdict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
@@ -80,6 +80,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+def check_header(func):
+    """Check Header."""
+
+    def _(must_header=Header(None), *args, **kwargs):
+        if must_header == "JAI MATA DI":
+            return func(*args, **kwargs)
+        return []
+
+    return _
+
+
 party_map = PartyMapping(TRANSACTIONS_JSON_FILE)
 
 
@@ -90,8 +102,9 @@ async def root():
 
 
 @app.get("/possible-parties")
-async def possible_parties(desc):
+async def possible_parties(desc, must_header=Header(None)):
     """Get possible_parties with the given desc."""
+    logger.info(f"Header {must_header}")
     logger.info(f"desc={desc}")
     search_result = party_map.search(desc)
     logger.debug(f"search_result={list(search_result)}")
