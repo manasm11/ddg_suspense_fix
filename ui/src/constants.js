@@ -1,6 +1,6 @@
 export default {
   SERVER_URL: "http://localhost:8000",
-  SERVER_CHECK_INTERVAL_SECONDS: 120,
+  SERVER_CHECK_INTERVAL_SECONDS: 5,
   SINGLE_INPUT_CARD_DETAILS: {
     password: {
       heading: "Password",

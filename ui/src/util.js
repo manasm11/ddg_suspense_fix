@@ -16,7 +16,6 @@ export default {
 };
 
 function join(...args) {
-  console.log(args);
   return (
     args.reduce(
       (result, currentValue) =>
