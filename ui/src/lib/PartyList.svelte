@@ -1,11 +1,11 @@
 <script>
-  export let parties = [];
+  export let parties;
   let copied = false;
-  let _timeout
+  let _timeout;
 
   function copy(party) {
     return async () => {
-        clearTimeout(_timeout);
+      clearTimeout(_timeout);
       await navigator.clipboard.writeText(party);
       copied = party;
       _timeout = setTimeout(() => (copied = ""), 3000);
@@ -13,7 +13,7 @@
   }
 </script>
 
-{#if parties.length}
+{#if parties && parties.length}
   <div
     class="bg-white flex flex-col w-1/2 self-center mt-3 border-2 border-blue-700"
   >
@@ -32,4 +32,6 @@
       <hr class="bg-gray-300 w-full h-0.5" />
     {/each}
   </div>
+{:else if parties !== undefined && !parties.length}
+  <div class="bg-red-500 text-white">NO PARTY FOUND</div>
 {/if}

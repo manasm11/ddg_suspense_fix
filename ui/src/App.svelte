@@ -2,7 +2,7 @@
   import { server_working, is_login } from "./stores";
   import SingleInputCard from "./lib/SingleInputCard.svelte";
   import PartyList from "./lib/PartyList.svelte";
-  let possible_parties = [];
+  let possible_parties;
 </script>
 
 <main class="flex flex-col bg-slate-200 h-screen w-screen">

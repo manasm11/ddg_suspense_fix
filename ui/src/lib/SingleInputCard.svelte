@@ -1,6 +1,6 @@
 <script>
   export let type;
-  export let possible_parties = [];
+  export let possible_parties;
   import u from "../util";
   import c from "../constants";
   import { is_login } from "../stores";
