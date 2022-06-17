@@ -70,9 +70,7 @@ class PartyMapping:
         return found, j
 
 
-origins = [
-    "http://localhost:8080",
-]
+origins = "*"
 
 app = FastAPI()
 app.add_middleware(

@@ -11,9 +11,9 @@
     "prod-server": "../venv/bin/python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
     "local-svelte":"rollup -c && sirv public --no-clear",
     "local-server": "../venv/bin/python -m uvicorn main:app", 
-    "dev": "concurrently npm:watch-*",
-    "prod": "concurrently npm:prod-*",
-    "local": "concurrently npm:local-*",
+    "dev": "sed -i -e \"s#.*SERVER_URL: .*#  SERVER_URL: 'http://localhost:8000',    #\" src/constants.js && concurrently npm:watch-*",
+    "prod": "sed -i -e \"s#.*SERVER_URL: .*#  SERVER_URL: 'http://$(curl ifconfig.me):8000',    #\" src/constants.js && concurrently npm:prod-*",
+    "local": "sed -i -e \"s#.*SERVER_URL: .*#  SERVER_URL: 'http://localhost:8000',    #\" src/constants.js && concurrently npm:local-*",
     "start": "sirv public --no-clear"
   },
   "devDependencies": {
