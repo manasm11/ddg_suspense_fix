@@ -33,7 +33,10 @@ class TransactionsExcelMarg:
         financial_year_start = datetime(self._start_year, 4, 1)
         financial_year_end = datetime(self._end_year, 3, 31)
         date = datetime.strptime(date, c.DATE_FORMAT)
-        return financial_year_start <= date <= financial_year_end
+        if financial_year_start <= date <= financial_year_end:
+           return True
+        logger.warning(f"Invalid Date: {date} not between financial year {financial_year_start}-{financial_year_end}")
+        return False 
 
     def _rows(self):
         """Iterate over all rows in all excel files."""
@@ -56,6 +59,8 @@ class TransactionsExcelMarg:
             )
             self._start_year = int(date_range.split("-")[2])
             self._end_year = int(date_range.split("-")[5])
+            if self._start_year == self._end_year:
+                self._end_year += 1
             self._df = pd.read_excel(file, skiprows=8, dtype=dtype, na_filter=False)
             logger.info(f"Read file {file} with {len(self._df)} rows")
             for i in range(len(self._df)):
