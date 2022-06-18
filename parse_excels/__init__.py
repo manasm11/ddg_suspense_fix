@@ -46,7 +46,7 @@ def _get_party_name(excel: TransactionsExcelMarg, item: dict):
     else:
         row = excel.row_by_item(item)
         not row and logger.error(f"No row found for item {item}")
-        party_name = row["PARTICULARS"] if row else c.SUSPENSE_ACC
+        party_name = row["PARTICULARS"] if row else ""
     return party_name
 
 

@@ -9,10 +9,11 @@ from parse_excels import (
     generate_json_from_icici_excels,
     update_transactions_json_from_marg_excels,
 )
+from combine_jsons import combine_all_json_files
 
 logger.add("logs/{time}.log", level="DEBUG")
-logger.add("logs/warns_{time}.log", level="WARNING")
-logger.add("logs/errors_{time}.log", level="ERROR")
+# logger.add("logs/warns_{time}.log", level="WARNING")
+# logger.add("logs/errors_{time}.log", level="ERROR")
 
 
 def main_questionary():
@@ -20,6 +21,7 @@ def main_questionary():
     choices = {
         "generate transactions.json from icici excels": generate_transactions_json,
         "update transactions.json from marg excels": update_transactions_json,
+        "combine and clean jsons": combine_jsons,
         "start frontend": start_frontend,
     }
     answer = q.MAIN(choices.keys()).ask()
@@ -45,6 +47,16 @@ def update_transactions_json():
     update_transactions_json_from_marg_excels(
         inExcelDirectory=answers["input_excels_directory"],
         jsonFile=answers["json_file"],
+    )
+
+
+def combine_jsons():
+    """Combine all json files and remove entries without "party_name" field"""
+    answers = q.COMBINE_JSONS().ask()
+    logger.debug(f"Answers: {answers}")
+    combine_all_json_files(
+        jsons_directory=answers["json_files_directory"],
+        output_json=answers["output_file"],
     )
 
 
