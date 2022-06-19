@@ -21,12 +21,12 @@ from . import constants as c
 class TransactionsExcelMarg:
     """Handle transactions from marg excel files."""
 
-    def __init__(self, excelDirectory: str):
+    def __init__(self, excelDirectory: str, start_fy: int):
         self._excelDirectory = excelDirectory
         logger.debug("Generating valid dates")
         self.__generate_valid_dates()
         logger.debug("Generating hashes")
-        self.__generate_hashes()
+        self.__generate_hashes(start_fy)
 
     def is_date_in_range(self, date: str) -> bool:
         """Check if date is in the current finanial year or not."""
@@ -57,10 +57,6 @@ class TransactionsExcelMarg:
                 .cell(7, 0)
                 .value.strip()
             )
-            self._start_year = int(date_range.split("-")[2])
-            self._end_year = int(date_range.split("-")[5])
-            if self._start_year == self._end_year:
-                self._end_year += 1
             self._df = pd.read_excel(file, skiprows=8, dtype=dtype, na_filter=False)
             logger.info(f"Read file {file} with {len(self._df)} rows")
             for i in range(len(self._df)):
@@ -120,8 +116,10 @@ class TransactionsExcelMarg:
             return True
         return False
 
-    def __generate_hashes(self):
+    def __generate_hashes(self, start_fy: int):
         self._date_amount = defaultdict(list)
+        self._start_year = start_fy
+        self._end_year = start_fy + 1
         for row in self._rows():
             jsonschema.validate(row, c.EXCEL_MARG_SCHEMA)
             # DEBIT means withdraw and CREDIT means deposit

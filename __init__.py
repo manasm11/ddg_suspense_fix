@@ -43,10 +43,11 @@ def generate_transactions_json():
 
 def update_transactions_json():
     """Update transactions json with the party details from marg excel files."""
-    answers = q.GENERATE_TRANSACTIONS("input_marg_excels").ask()
+    answers = q.UPDATE_TRANSACTIONS("input_marg_excels").ask()
     update_transactions_json_from_marg_excels(
         inExcelDirectory=answers["input_excels_directory"],
         jsonFile=answers["json_file"],
+        start_fy=int(answers["start_fy"]),
     )
 
 

@@ -18,9 +18,9 @@ def generate_json_from_icici_excels(inExcelDirectory: str, outJsonFile: str):
     json_.save()
 
 
-def update_transactions_json_from_marg_excels(inExcelDirectory: str, jsonFile: str):
+def update_transactions_json_from_marg_excels(inExcelDirectory: str, jsonFile: str, start_fy: int):
     """Parse over marg excels rows and update transactions json."""
-    excel = TransactionsExcelMarg(inExcelDirectory)
+    excel = TransactionsExcelMarg(inExcelDirectory, start_fy)
     json_ = TransactionsJson(jsonFile)
     for item in json_.items():
         jsonschema.validate(item, c.JSON_SCHEMA)

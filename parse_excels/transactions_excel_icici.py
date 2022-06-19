@@ -10,6 +10,9 @@ from loguru import logger
 
 from . import constants as c
 
+identity_func = lambda a: a
+
+
 """Handle transactions from icici excel files."""
 
 
@@ -109,7 +112,7 @@ class TransactionsExcelIcici:
             if desc.count("/") == 5
             else self.__remove_substrings(desc, "/", [2]),
             "RTGS-": lambda desc: self.__remove_substrings(desc, "-", [1]),
-            "BY CASH": lambda desc: desc,
+            "BY CASH": identity_func,
             "UPI/": lambda desc: self.__remove_substrings(desc, "/", [1, 2, 5]),
             "INF/INFT/": lambda desc: self.__remove_substrings(desc, "/", [2, 3]),
             "TRF/": lambda desc: self.__remove_substrings(desc, "/", [2, 4]),
@@ -119,13 +122,13 @@ class TransactionsExcelIcici:
             "BIL/INFT/": lambda desc: self.__remove_substrings(
                 desc, "/", [2, 3]
             ),  # Doubt
-            "TRFR FROM:": lambda desc: desc,
-            "THIRD PARTY DEPOSIT": lambda desc: desc,
-            "BIL/REV PMT ID": lambda desc: desc,
+            "TRFR FROM:": identity_func,
+            "THIRD PARTY DEPOSIT": identity_func,
+            "BIL/REV PMT ID": identity_func,
             "INT ON FD/RD ": lambda desc: desc.split(" ")[3],
             " FD CLOS ": lambda desc: desc.split(" ")[0],
             "REV CHQ RET": lambda desc: " ".join(desc.split(" ")[:3]),
-            "/NTB": lambda desc: desc,
+            "/NTB": identity_func,
             "RTGS RETURN-": lambda desc: self.__remove_substrings(desc, "-", [1, 3]),
             "/NBL/": lambda desc: desc.split("/")[2],
             "/SANOTSDH AGENCY": lambda desc: SANTOSH_AGENCY,
@@ -134,8 +137,12 @@ class TransactionsExcelIcici:
             "_PURANID_BRK_": lambda desc: self.__remove_substrings(desc, "_", [0, 3]),
             "REV MOB ALRT CHG ": lambda desc: c.BANK_CHARGES,
             "REV CHQ BOOK ": lambda desc: c.BANK_CHARGES,
-            "UPI 029015347931 DT 161020": lambda desc: desc,
-            "FT-BIL REV PMT ID ": lambda desc: desc,
+            "UPI 029015347931 DT 161020": identity_func,
+            "FT-BIL REV PMT ID ": identity_func,
+            "SELF DEPOSIT": identity_func,
+            "UPI 136551282438 31 12 2021 YBL0E8F558680D44DDCA584A6FE43DD6993": identity_func,
+            "GST ADJ TRAN FOR S21846176/24-03-2022": identity_func,
+            "CHRG ADJ TRAN FOR S21846176/24-03-2022": identity_func,
         }
         for substring in substring_funcs:
             if substring in desc:
@@ -201,10 +208,10 @@ class TransactionsExcelIcici:
             "RTN CHG-": lambda desc: c.BANK_CHARGES,
             "CHQ BOOK CHG": lambda desc: c.BANK_CHARGES,
             "BIL/ONL/": lambda desc: self.__remove_substrings(desc, "/", [2, 4]),
-            "TRFR TO:": lambda desc: desc,
+            "TRFR TO:": identity_func,
             "TRF TO FD/RD ": lambda desc: desc.split(" ")[3],
             ":INT.COLL:": lambda desc: desc.split(":")[0],
-            "MAOVET ANIMAL HEALTH CARE": lambda desc: desc,
+            "MAOVET ANIMAL HEALTH CARE": identity_func,
             "QICO79431841": lambda desc: self.__remove_substrings(desc, "/", [1]),
             "BSNLPOST_QICI79": lambda desc: self.__remove_substrings(desc, "/", [1]),
             "DBT CARD CHG": lambda desc: c.BANK_CHARGES,
@@ -214,14 +221,15 @@ class TransactionsExcelIcici:
             "CGST201912051476755023": lambda desc: c.GST,
             "NEFT:": lambda desc: self.__remove_substrings(desc, "/", [0]),
             "RTGS:": lambda desc: self.__remove_substrings(desc, "/", [0]),
-            "RAUNAK SALES & MARKETING": lambda desc: desc,
-            "INS NO:": lambda desc: desc,
+            "RAUNAK SALES & MARKETING": identity_func,
+            "INS NO:": identity_func,
             "DSB SERV CHGS ": lambda desc: c.BANK_CHARGES,
             "SGST202007091963970550": lambda desc: c.GST,
             "CGST202007091963970552": lambda desc: c.GST,
             "_BRK_KAN_": lambda desc: self.__remove_substrings(desc, "_", [0, 1]),
             "CASH DEP CHG ": lambda desc: c.BANK_CHARGES,
             "RTGS/": lambda desc: self.__remove_substrings(desc, "/", [1, 4]),
+            "BIL/BPAY/IC3109943304/BBPS/KANPUR ELECTRICIT": identity_func,
         }
         for substring in substring_funcs:
             if substring in desc:
