@@ -1,5 +1,5 @@
 export default {
-  SERVER_URL: 'http://localhost:8000',    
+  SERVER_URL: 'https://suspense.api.durgadawaghar.com',    
   SERVER_CHECK_INTERVAL_SECONDS: 5,
   PASSWORD: "JAI MATA DI",
   MUST_HEADER:
